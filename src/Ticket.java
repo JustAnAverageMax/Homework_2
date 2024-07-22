@@ -1,9 +1,10 @@
 import java.time.Instant;
+import java.util.Arrays;
 
 public class Ticket {
     private String id;
     private String concertHall;
-    private int eventCode;
+    private String eventCode;
     private long time;
     private final long creationTime;
     private boolean isPromo;
@@ -12,25 +13,57 @@ public class Ticket {
     private float price;
 
     public Ticket(){
+       this.creationTime = Instant.now().getEpochSecond();
+    }
+
+    public Ticket(String concertHall, long time, String eventCode) {
+        setConcertHall(concertHall);
+        setTime(time);
+        setEventCode(eventCode);
+
         this.creationTime = Instant.now().getEpochSecond();
     }
 
-    public Ticket(String id, String concertHall, int eventCode, long time, boolean isPromo, char stadiumSector, float maxBackpackWeight) {
-        this.id = id;
-        this.concertHall = concertHall;
-        this.eventCode = eventCode;
-        this.time = time;
-        this.isPromo = isPromo;
-        this.stadiumSector = stadiumSector;
-        this.maxBackpackWeight = maxBackpackWeight;
+    public Ticket(String id, String concertHall, String eventCode, long time, boolean isPromo, char stadiumSector, float maxBackpackWeight, float price) {
+        setId(id);
+        setConcertHall(concertHall);
+        setEventCode(eventCode);
+        setTime(time);
+        setPromo(isPromo);
+        setStadiumSector(stadiumSector);
+        setMaxBackpackWeight(maxBackpackWeight);
+        setPrice(price);
+
         this.creationTime = Instant.now().getEpochSecond();
     }
 
-    public Ticket(String concertHall, long time, int eventCode) {
-        this.concertHall = concertHall;
-        this.time = time;
-        this.eventCode = eventCode;
-        this.creationTime = Instant.now().getEpochSecond();
+    public void setId(String id) {
+        if(id.matches("[a-zA-Z0-9]{4}"))
+            this.id = id;
+    }
+
+    public void setConcertHall(String concertHall) {
+        if(concertHall.length() <= 10)
+            this.concertHall = concertHall;
+    }
+
+    public void setEventCode(String eventCode) {
+        if(eventCode.length() == 3 && eventCode.chars().allMatch(Character::isDigit))
+            this.eventCode = eventCode;
+    }
+
+    public void setTime(long time) {
+        if(time >= 0)
+            this.time = time;
+    }
+
+    public void setPromo(boolean promo) {
+        this.isPromo = promo;
+    }
+
+    public void setStadiumSector(char stadiumSector) {
+        if(Arrays.asList('A', 'B', 'C').contains(stadiumSector))
+            this.stadiumSector = stadiumSector;
     }
 
     public void setPrice(float price){
@@ -39,26 +72,31 @@ public class Ticket {
         }
     }
 
+    public void setMaxBackpackWeight(float maxBackpackWeight) {
+        if(maxBackpackWeight >= 0.0f)
+            this.maxBackpackWeight = maxBackpackWeight;
+    }
+
     public long getCreationTime(){
-        return creationTime;
+        return this.creationTime;
     }
 
     public float getPrice(){
-        return price;
+        return this.price;
     }
 
     @Override
     public String toString() {
         return "Ticket{" +
-                "id='" + id + '\'' +
-                ", concertHall='" + concertHall + '\'' +
-                ", eventCode=" + eventCode +
-                ", time=" + time +
-                ", creationTime=" + creationTime +
-                ", isPromo=" + isPromo +
-                ", stadiumSector=" + stadiumSector +
-                ", maxBackpackWeight=" + maxBackpackWeight +
-                ", price=" + price +
+                "id='" + this.id + '\'' +
+                ", concertHall='" + this.concertHall + '\'' +
+                ", eventCode='" + this.eventCode + '\'' +
+                ", time=" + this.time +
+                ", creationTime=" + this.creationTime +
+                ", isPromo=" + this.isPromo +
+                ", stadiumSector=" + this.stadiumSector +
+                ", maxBackpackWeight=" + this.maxBackpackWeight +
+                ", price=" + this.price +
                 '}';
     }
 }
