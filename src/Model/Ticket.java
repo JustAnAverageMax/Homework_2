@@ -69,6 +69,42 @@ public class Ticket {
         return this;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public ConcertHall getConcertHall() {
+        return concertHall;
+    }
+
+    public String getEventCode() {
+        return eventCode;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public boolean isPromo() {
+        return isPromo;
+    }
+
+    public StadiumSector getStadiumSector() {
+        return stadiumSector;
+    }
+
+    public BigDecimal getMaxBackpackWeight() {
+        return maxBackpackWeight;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
     @Override
     public String toString() {
         return "Ticket{" +
