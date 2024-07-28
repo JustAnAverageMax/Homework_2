@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Random;
 
 public class TicketService {
+    private static List<Ticket> storage;
+
     public static void main(String[] args) {
         StadiumSector[] sectors = StadiumSector.values();
         ConcertHall[] halls = ConcertHall.values();
 
         Random random = new Random();
-        List<Ticket> storage = new ArrayList<>();
+        storage = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
             BigDecimal randomPrice = BigDecimal
@@ -42,6 +44,19 @@ public class TicketService {
                     );
             System.out.println(currentTicket);
             storage.add(currentTicket);
+
+
+
         }
+        int randomId = random.nextInt(storage.size());
+        System.out.println("Ticket with id #" + randomId + ":\n" + getTicketById(randomId));
+    }
+
+    public static Ticket getTicketById(int ID) {
+        Ticket result = new Ticket();
+        for (Ticket t : storage)
+            if (t.getId() == ID) result = t;
+
+        return result;
     }
 }
