@@ -1,20 +1,26 @@
 package Model;
 
-import java.time.Instant;
-import java.util.Arrays;
+import constants.ConcertHall;
+import constants.Formatters;
+import constants.StadiumSector;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 public class Ticket {
-    private int id;
-    private String concertHall;
-    private String eventCode;
-    private long time;
-    private final long creationTime;
-    private boolean isPromo;
-    private char stadiumSector;
-    private float maxBackpackWeight;
-    private float price;
-
     private static int counter = 0;
+
+    private int id;
+    private ConcertHall concertHall;
+    private String eventCode;
+    private LocalDateTime time;
+    private final LocalDateTime creationTime;
+    private boolean isPromo;
+    private StadiumSector stadiumSector;
+    private BigDecimal maxBackpackWeight;
+    private BigDecimal price;
+
 
     private void initID(){
         this.id = counter;
@@ -23,71 +29,58 @@ public class Ticket {
 
     public Ticket() {
         initID();
-        this.creationTime = Instant.now().getEpochSecond();
+        this.creationTime = LocalDateTime.now();
     }
 
-    public Ticket(String concertHall, long time, String eventCode) {
-        initID();
-        setConcertHall(concertHall);
-        setTime(time);
-        setEventCode(eventCode);
-
-        this.creationTime = Instant.now().getEpochSecond();
+    public Ticket withConcertHall(ConcertHall concertHall) {
+        this.concertHall = concertHall;
+        return this;
     }
 
-    public Ticket(String concertHall, String eventCode, long time, boolean isPromo, char stadiumSector, float maxBackpackWeight, float price) {
-        initID();
-        setConcertHall(concertHall);
-        setEventCode(eventCode);
-        setTime(time);
-        setPromo(isPromo);
-        setStadiumSector(stadiumSector);
-        setMaxBackpackWeight(maxBackpackWeight);
-        setPrice(price);
-
-        this.creationTime = Instant.now().getEpochSecond();
-    }
-
-    public void setConcertHall(String concertHall) {
-        if (concertHall.length() <= 10) this.concertHall = concertHall;
-    }
-
-    public void setEventCode(String eventCode) {
+    public Ticket withEventCode(String eventCode) {
         if (eventCode.length() == 3 && eventCode.chars().allMatch(Character::isDigit)) this.eventCode = eventCode;
+        return this;
     }
 
-    public void setTime(long time) {
-        if (time >= 0) this.time = time;
+    public Ticket withTime(LocalDateTime time) {
+        if (time.isAfter(LocalDateTime.now())) this.time = time;
+        return this;
     }
 
-    public void setPromo(boolean promo) {
+    public Ticket withPromo(boolean promo) {
         this.isPromo = promo;
+        return this;
     }
 
-    public void setStadiumSector(char stadiumSector) {
-        if (Arrays.asList('A', 'B', 'C').contains(stadiumSector)) this.stadiumSector = stadiumSector;
+    public Ticket withStadiumSector(StadiumSector stadiumSector) {
+        this.stadiumSector = stadiumSector;
+        return this;
     }
 
-    public void setPrice(float price) {
-        if (price > 0.0f) {
-            this.price = price;
-        }
+    public Ticket withPrice(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) > 0) this.price = price;
+        this.price = this.price.setScale(2, RoundingMode.HALF_UP);
+        return this;
     }
 
-    public void setMaxBackpackWeight(float maxBackpackWeight) {
-        if (maxBackpackWeight >= 0.0f) this.maxBackpackWeight = maxBackpackWeight;
-    }
-
-    public long getCreationTime() {
-        return this.creationTime;
-    }
-
-    public float getPrice() {
-        return this.price;
+    public Ticket withMaxBackpackWeight(BigDecimal maxBackpackWeight) {
+        if (maxBackpackWeight.compareTo(BigDecimal.ZERO) >= 0) this.maxBackpackWeight = maxBackpackWeight;
+        this.maxBackpackWeight = this.maxBackpackWeight.setScale(3, RoundingMode.HALF_UP);
+        return this;
     }
 
     @Override
     public String toString() {
-        return "Ticket{" + "id='" + this.id + '\'' + ", concertHall='" + this.concertHall + '\'' + ", eventCode='" + this.eventCode + '\'' + ", time=" + this.time + ", creationTime=" + this.creationTime + ", isPromo=" + this.isPromo + ", stadiumSector=" + this.stadiumSector + ", maxBackpackWeight=" + this.maxBackpackWeight + ", price=" + this.price + '}';
+        return "Ticket{" +
+                "id=" + id +
+                ", concertHall='" + concertHall + '\'' +
+                ", eventCode='" + eventCode + '\'' +
+                ", time=" + time.format(Formatters.dateTimeFormatter) +
+                ", creationTime=" + creationTime.format(Formatters.dateTimeFormatter) +
+                ", isPromo=" + isPromo +
+                ", stadiumSector=" + stadiumSector +
+                ", maxBackpackWeight=" + maxBackpackWeight +
+                ", price=" + price +
+                '}';
     }
 }
