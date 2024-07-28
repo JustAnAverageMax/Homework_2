@@ -1,3 +1,5 @@
+package Model;
+
 import java.time.Instant;
 import java.util.Arrays;
 
