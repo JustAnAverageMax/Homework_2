@@ -7,11 +7,9 @@ import constants.StadiumSector;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public class Ticket {
-    private static int counter = 0;
-
-    private int id;
+public class Ticket extends IdentifiableEntity implements Printable, Sharable {
     private ConcertHall concertHall;
     private String eventCode;
     private LocalDateTime time;
@@ -21,14 +19,8 @@ public class Ticket {
     private BigDecimal maxBackpackWeight;
     private BigDecimal price;
 
-
-    private void initID(){
-        this.id = counter;
-        counter++;
-    }
-
     public Ticket() {
-        initID();
+        generateID();
         this.creationTime = LocalDateTime.now();
     }
 
@@ -38,12 +30,12 @@ public class Ticket {
     }
 
     public Ticket withEventCode(String eventCode) {
-        if (eventCode.length() == 3 && eventCode.chars().allMatch(Character::isDigit)) this.eventCode = eventCode;
+        if (isEventCodeValid(eventCode)) this.eventCode = eventCode;
         return this;
     }
 
     public Ticket withTime(LocalDateTime time) {
-        if (time.isAfter(LocalDateTime.now())) this.time = time;
+        if (isTimeValid(time)) this.time = time;
         return this;
     }
 
@@ -58,19 +50,38 @@ public class Ticket {
     }
 
     public Ticket withPrice(BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) > 0) this.price = price;
+        if (isPriceValid(price)) this.price = price;
         this.price = this.price.setScale(2, RoundingMode.HALF_UP);
         return this;
     }
 
     public Ticket withMaxBackpackWeight(BigDecimal maxBackpackWeight) {
-        if (maxBackpackWeight.compareTo(BigDecimal.ZERO) >= 0) this.maxBackpackWeight = maxBackpackWeight;
+        if (isMaxBackpackWeightValid(maxBackpackWeight)) this.maxBackpackWeight = maxBackpackWeight;
         this.maxBackpackWeight = this.maxBackpackWeight.setScale(3, RoundingMode.HALF_UP);
         return this;
     }
 
-    public int getId() {
-        return id;
+    public boolean isEventCodeValid(String eventCode){
+        return eventCode.length() == 3 && eventCode.chars().allMatch(Character::isDigit);
+    }
+
+    public boolean isTimeValid(LocalDateTime time){
+        return time.isAfter(LocalDateTime.now());
+    }
+
+    public boolean isPriceValid(BigDecimal price){
+        return price.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public boolean isMaxBackpackWeightValid(BigDecimal maxBackpackWeight){
+        return maxBackpackWeight.compareTo(BigDecimal.ZERO) >= 0;
+    }
+    public void setStadiumSector(StadiumSector stadiumSector) {
+        this.stadiumSector = stadiumSector;
+    }
+
+    public void setTime(LocalDateTime time) {
+        if(isTimeValid(time)) this.time = time;
     }
 
     public ConcertHall getConcertHall() {
@@ -106,9 +117,58 @@ public class Ticket {
     }
 
     @Override
+    protected void generateID() {
+        this.ID = IdentifiableEntity.counter++;
+    }
+
+    @Override
+    public void print() {
+        String message = "\nTicket #" +
+                this.ID +
+                ":\n*Concert Hall - " +
+                this.concertHall +
+                "\n*Event code - " +
+                this.eventCode +
+                "\n*Time - " +
+                time.format(Formatters.dateTimeFormatter) +
+                "\n*Ticket was created in " +
+                creationTime.format(Formatters.dateTimeFormatter) +
+                "\n*This ticket is " +
+                (isPromo ? "" : "not ") + "promo" +
+                "\n*Stadium sector - " +
+                stadiumSector +
+                "\n*Max backpack weight is " +
+                maxBackpackWeight + " kg" +
+                "\n*Price - " +
+                price + "$\n"
+                ;
+        System.out.println(message);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return isPromo == ticket.isPromo &&
+                concertHall == ticket.concertHall &&
+                Objects.equals(eventCode, ticket.eventCode) &&
+                Objects.equals(time, ticket.time) &&
+                Objects.equals(creationTime, ticket.creationTime) &&
+                stadiumSector == ticket.stadiumSector &&
+                Objects.equals(maxBackpackWeight, ticket.maxBackpackWeight) &&
+                Objects.equals(price, ticket.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(concertHall, eventCode, time, creationTime, isPromo, stadiumSector, maxBackpackWeight, price);
+    }
+
+    @Override
     public String toString() {
         return "Ticket{" +
-                "id=" + id +
+                "ID=" + ID +
                 ", concertHall='" + concertHall + '\'' +
                 ", eventCode='" + eventCode + '\'' +
                 ", time=" + time.format(Formatters.dateTimeFormatter) +
@@ -118,5 +178,15 @@ public class Ticket {
                 ", maxBackpackWeight=" + maxBackpackWeight +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    public void share(String phoneNumber, String email) {
+        System.out.println("Ticket #" + this.ID + " was shared by:\n*Phone number - " + phoneNumber + "\n*Email - " + email);
+    }
+
+    @Override
+    public void share(String phoneNumber) {
+        System.out.println("Ticket #" + this.ID + " was shared by:\n*Phone number - " + phoneNumber);
     }
 }

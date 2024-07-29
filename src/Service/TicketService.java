@@ -14,6 +14,8 @@ public class TicketService {
     private static List<Ticket> storage;
 
     public static void main(String[] args) {
+        String definitelyNotMyNumber = "+375-44-703-73-19";
+        String definitelyNotMyEmail = "maximkrutalevich@gmail.com";
         StadiumSector[] sectors = StadiumSector.values();
         ConcertHall[] halls = ConcertHall.values();
 
@@ -42,20 +44,21 @@ public class TicketService {
                             .plusHours(random.nextInt(24))
                             .withMinute(random.nextInt(12) * 5)
                     );
-            System.out.println(currentTicket);
+            currentTicket.print();
             storage.add(currentTicket);
-
-
-
         }
         int randomId = random.nextInt(storage.size());
-        System.out.println("Ticket with id #" + randomId + ":\n" + getTicketById(randomId));
+        Ticket randomTicket = getTicketById(randomId);
+        System.out.println("Ticket with id #" + randomId + ":");
+        randomTicket.print();
+        randomTicket.share(definitelyNotMyNumber);
+        randomTicket.share(definitelyNotMyNumber, definitelyNotMyEmail);
     }
 
     public static Ticket getTicketById(int ID) {
         Ticket result = new Ticket();
         for (Ticket t : storage)
-            if (t.getId() == ID) result = t;
+            if (t.getID() == ID) result = t;
 
         return result;
     }
