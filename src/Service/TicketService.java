@@ -1,6 +1,10 @@
 package Service;
 
+import Model.Admin;
+import Model.Client;
 import Model.Ticket;
+import Model.User;
+import constants.AccessLevel;
 import constants.ConcertHall;
 import constants.StadiumSector;
 
@@ -22,6 +26,7 @@ public class TicketService {
         Random random = new Random();
         storage = new ArrayList<>();
 
+        //Random tickets generation
         for (int i = 0; i < 10; i++) {
             BigDecimal randomPrice = BigDecimal
                     .valueOf(10 + (100 - 10) * random.nextDouble());
@@ -47,19 +52,51 @@ public class TicketService {
             currentTicket.print();
             storage.add(currentTicket);
         }
+
+        //Picking a random ID and getting ticket with it
         int randomId = random.nextInt(storage.size());
         Ticket randomTicket = getTicketById(randomId);
         System.out.println("Ticket with id #" + randomId + ":");
         randomTicket.print();
+
+        //Sharing random ticket
         randomTicket.share(definitelyNotMyNumber);
         randomTicket.share(definitelyNotMyNumber, definitelyNotMyEmail);
+
+        //Users
+        AccessLevel[] accessLevels = AccessLevel.values();
+        AccessLevel randomAccessLevel = accessLevels[random.nextInt(accessLevels.length)];
+        String name = "Maksim";
+        String surname = "Krutalevich";
+        String login = "mkBestLoginEver";
+        User firstUser = new Client()
+                .withTicket(randomTicket)
+                .withName(name)
+                .withSurname(surname)
+                .withLogin(login);
+        User secondUser = new Admin()
+                .withAccessLevel(randomAccessLevel)
+                .withName(name)
+                .withSurname(surname)
+                .withLogin(login);
+        firstUser.printRole();
+        firstUser.print();
+        secondUser.printRole();
+        secondUser.print();
+
+        //Client's getTicket() and Admin's checkTicket() work
+        Client testClient = ((Client) firstUser);
+        Admin testAdmin = ((Admin) secondUser);
+        Ticket clientTicket = testClient.getTicket();
+        clientTicket.print();
+        testAdmin.checkTicket(clientTicket);
+
     }
 
     public static Ticket getTicketById(int ID) {
         Ticket result = new Ticket();
         for (Ticket t : storage)
             if (t.getID() == ID) result = t;
-
         return result;
     }
 }
