@@ -3,6 +3,8 @@ package Model;
 import constants.ConcertHall;
 import constants.Formatters;
 import constants.StadiumSector;
+import utils.NullableWarning;
+import utils.NullableWarningProcessor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,16 +13,20 @@ import java.util.Objects;
 
 public class Ticket extends IdentifiableEntity implements Printable, Sharable {
     private ConcertHall concertHall;
+    @NullableWarning
     private String eventCode;
+    @NullableWarning
     private LocalDateTime time;
     private final LocalDateTime creationTime;
     private boolean isPromo = false;
+    @NullableWarning
     private StadiumSector stadiumSector;
     private BigDecimal maxBackpackWeight;
     private BigDecimal price;
 
     public Ticket() {
         generateID();
+        NullableWarningProcessor.processAnnotation(this);
         this.creationTime = LocalDateTime.now();
     }
 
