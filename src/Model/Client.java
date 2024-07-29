@@ -5,22 +5,7 @@ public class Client extends User{
     private Ticket ticket;
 
     public Client(){
-        generateID();
-    }
-
-    public Client withName(String name){
-        this.name = name;
-        return this;
-    }
-
-    public Client withSurname(String surname){
-        this.surname = surname;
-        return this;
-    }
-
-    public Client withLogin(String login){
-        this.login = login;
-        return this;
+        this.generateID();
     }
 
     public Client withTicket(Ticket ticket){
@@ -29,13 +14,19 @@ public class Client extends User{
     }
 
     public Ticket getTicket() {
-        return ticket;
+        return this.ticket;
     }
 
     @Override
     public void print(){
-        System.out.println("Client #" + this.ID);
-        ticket.print();
+        System.out.println("Client #" + this.ID +
+                ":\n*Name - " + this.name +
+                "\n*Surname - " + this.surname +
+                "\n*Login - " + this.login);
+        if(this.ticket != null){
+            System.out.println("Has ticket:");
+            this.ticket.print();
+        }
     }
 
     @Override

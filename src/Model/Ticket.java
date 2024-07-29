@@ -14,7 +14,7 @@ public class Ticket extends IdentifiableEntity implements Printable, Sharable {
     private String eventCode;
     private LocalDateTime time;
     private final LocalDateTime creationTime;
-    private boolean isPromo;
+    private boolean isPromo = false;
     private StadiumSector stadiumSector;
     private BigDecimal maxBackpackWeight;
     private BigDecimal price;
@@ -62,20 +62,32 @@ public class Ticket extends IdentifiableEntity implements Printable, Sharable {
     }
 
     public boolean isEventCodeValid(String eventCode){
-        return eventCode.length() == 3 && eventCode.chars().allMatch(Character::isDigit);
+        return eventCode != null && eventCode.length() == 3 && eventCode.chars().allMatch(Character::isDigit);
     }
 
     public boolean isTimeValid(LocalDateTime time){
-        return time.isAfter(LocalDateTime.now());
+        return time != null && time.isAfter(LocalDateTime.now());
     }
 
     public boolean isPriceValid(BigDecimal price){
-        return price.compareTo(BigDecimal.ZERO) > 0;
+        return price != null && price.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isMaxBackpackWeightValid(BigDecimal maxBackpackWeight){
-        return maxBackpackWeight.compareTo(BigDecimal.ZERO) >= 0;
+        return maxBackpackWeight != null && maxBackpackWeight.compareTo(BigDecimal.ZERO) >= 0;
     }
+
+    public String checkTicket(){
+        return "Ticket #" + this.ID +
+                "\n*Concert hall is" + (this.concertHall != null ? " " : " not ") + "valid" +
+                "\n*Event code is" + (this.isEventCodeValid(this.eventCode) ? " " : " not ") + "valid" +
+                "\n*Time is" + (this.isTimeValid(this.time) ? " " : " not ") + "valid" +
+                "\n*Stadium sector is" + (this.stadiumSector != null ? " " : " not ") + "valid" +
+                "\n*Max backpack weight is" + (this.isMaxBackpackWeightValid(this.maxBackpackWeight) ? " " : " not ") + "valid" +
+                "\n*Price is" + (this.isPriceValid(this.price) ? " " : " not ") + "valid"
+                ;
+    }
+
     public void setStadiumSector(StadiumSector stadiumSector) {
         this.stadiumSector = stadiumSector;
     }
